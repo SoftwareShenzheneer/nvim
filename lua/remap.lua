@@ -57,3 +57,6 @@ vim.keymap.set("n", "<leader>y", "\"+y", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>Y", "\"+Y", { noremap = true, silent = true })
 vim.keymap.set("v", "<leader>y", "\"+y", { noremap = true, silent = true })
 
+-- Obsidian remap
+vim.keymap.set("n", "<leader>ot", ":ObsidianToday<CR>", { noremap = true, silent = true })
+
