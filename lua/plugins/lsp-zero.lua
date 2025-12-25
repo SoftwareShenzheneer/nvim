@@ -1,12 +1,11 @@
 return {
-  {
     'VonHeikemen/lsp-zero.nvim',
     branch = 'v1.x',
     dependencies = {
       -- LSP Support
       {'neovim/nvim-lspconfig'},             -- Required
       {'williamboman/mason.nvim'},           -- Optional
-      {'williamboman/mason-lspconfig.nvim'}, -- Optional
+      {'williamboman/mason-lspconfig.nvim', version = "v1.32.0"}, -- Optional
 
       -- Autocompletion
       {'hrsh7th/nvim-cmp'},         -- Required
@@ -21,6 +20,9 @@ return {
       {'rafamadriz/friendly-snippets'}, -- Optional
     },
     config = function()
+
+
+
       local lsp = require('lsp-zero').preset({
         name = 'minimal',
         set_lsp_keymaps = true,
@@ -34,6 +36,10 @@ return {
         'bashls',
         'lua_ls'
       })
+
+      -- lsp.configure('clangd', {
+      --
+      -- })
 
       -- (Optional) Configure lua language server for neovim
       -- vim.fn.sign_define("DiagnosticSignError", { text = "", texthl = "DiagnosticSignError" })
@@ -66,6 +72,11 @@ return {
             vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<Tab>', true, true, true), 'n', true) 
           end
         end
+
+
+
+
+
       end
 
       -- Map Shift+Tab to jump to the previous placeholder
@@ -108,4 +119,4 @@ return {
       })
     end,
   }
-}
+
