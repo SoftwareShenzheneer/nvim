@@ -28,6 +28,13 @@ return {
         suggest_lsp_servers = false,
       })
 
+      lsp.ensure_installed({
+        'clangd',
+        'pyright',
+        'bashls',
+        'lua_ls'
+      })
+
       -- (Optional) Configure lua language server for neovim
       -- vim.fn.sign_define("DiagnosticSignError", { text = "", texthl = "DiagnosticSignError" })
       -- vim.diagnostic.disable()
