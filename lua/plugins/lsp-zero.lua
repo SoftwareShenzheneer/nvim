@@ -1,8 +1,28 @@
-local function format_helper()
+local function format_css()
+    local bufname = vim.api.nvim_buf_get_name(0)
+    if bufname == "" then
+        print("No file to format")
+        return
+    end
+
+    vim.fn.jobstart({ "prettier", "--write", bufname }, {
+        on_exit = function(_, exit_code)
+            if exit_code == 0 then
+                print("Formatted:", bufname)
+                vim.api.nvim_buf_call(0, function()
+                    vim.cmd("edit!")
+                end)
+            else
+                print("Prettier failed on:", bufname)
+            end
+        end
+    })
+end
+
+local function format_helper(filetypes, lsp_filter)
     vim.api.nvim_create_autocmd("FileType", {
         pattern = filetypes,
         callback = function()
-            -- function to format a given range
             local function format_range(start_line, start_char, end_line, end_char)
                 vim.lsp.buf.format({
                     async = true,
@@ -15,10 +35,7 @@ local function format_helper()
             end
 
             -- Normal mode: current line
-            vim.keymap.set("n", "=", function()
-                local row = vim.api.nvim_win_get_cursor(0)[1]
-                format_range(row - 1, 0, row, 0)
-            end, { noremap = true, silent = true, buffer = 0 })
+            -- For normal mode, just use "==" instead
 
             -- Visual mode: selection
             vim.keymap.set("v", "=", function()
@@ -87,12 +104,6 @@ return {
         root_dir = vim.fs.dirname(vim.fs.find({ ".git" }, { upward = true })[1]),
     }
 
-    vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "html" },
-        callback = function(event)
-            vim.lsp.start(vim.lsp.config["html"], { bufnr = event.buf })
-        end,
-    })
     -- CSS
     vim.lsp.config["cssls"] = {
         cmd = cmd_helper("vscode-css-language-server"),
@@ -100,12 +111,6 @@ return {
         root_dir = vim.fs.dirname(vim.fs.find({ ".git" }, { upward = true })[1]),
     }
 
-    vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "css" },
-        callback = function(event)
-            vim.lsp.start(vim.lsp.config["cssls"], { bufnr = event.buf })
-        end,
-    })
     -- JavaScript
     vim.lsp.config["ts_ls"] = {
         cmd = cmd_helper("typescript-language-server"),
@@ -118,22 +123,16 @@ return {
         end,
     }
 
-    vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
-        callback = function(event)
-            vim.lsp.start(vim.lsp.config["ts_ls"], { bufnr = event.buf })
-        end,
-    })
-
-    format_helper({ "css", "scss", "less" }, function(client)
-        return client.name == "cssls"
-    end)
-    format_helper({ "html" }, function(client)
-        return client.name == "html"
-    end)
-    format_helper({ "javascript", "typescript" }, function(client)
-        return client.name == "tsserver"
-    end)
+    -- Currently unused since my LSP's don't provide formatter -> for css use prettier
+    -- format_helper({ "css", "scss", "less" }, function(client)
+    --     return client.name == "cssls"
+    -- end)
+    -- format_helper({ "html" }, function(client)
+    --     return client.name == "html"
+    -- end)
+    -- format_helper({ "javascript", "typescript" }, function(client)
+    --     return client.name == "tsserver"
+    -- end)
     format_helper({ "c", "cpp" }, function(client)
         return client.name == "clangd"
     end)
@@ -203,6 +202,8 @@ return {
         { name = 'luasnip' },  -- Include LuaSnip for snippet completion
       },
     })
+
+    vim.api.nvim_create_user_command("Formatcss", format_css, { desc = "Format current buffer with Prettier" })
   end,
 }
 
