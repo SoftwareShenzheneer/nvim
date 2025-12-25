@@ -34,8 +34,8 @@ vim.opt.softtabstop = 4
 vim.cmd [[set list]]
 
 -- Convert tabs into spaces automatically - consider turning this off..
--- vim.opt.expandtab = true
-vim.opt.expandtab = false
+vim.opt.expandtab = true
+-- vim.opt.expandtab = false
 
 -- Filetype specific highlighting
 vim.cmd [[filetype plugin indent on]]
