@@ -57,7 +57,7 @@ return {
       automatic_installation = true,
     }
 
-    local mason_bin = vim.fn.stdpath("data") .. "\\mason\\bin\\"
+    local mason_bin = vim.fn.stdpath("data") .. "/mason/bin/"
 
     -- C/C++
     vim.lsp.config["clangd"] = {
