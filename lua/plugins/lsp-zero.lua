@@ -1,3 +1,39 @@
+local function format_helper()
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = filetypes,
+        callback = function()
+            -- function to format a given range
+            local function format_range(start_line, start_char, end_line, end_char)
+                vim.lsp.buf.format({
+                    async = true,
+                    filter = lsp_filter, -- optional filter function
+                    range = {
+                        start = { line = start_line, character = start_char },
+                        ["end"] = { line = end_line, character = end_char },
+                    },
+                })
+            end
+
+            -- Normal mode: current line
+            vim.keymap.set("n", "=", function()
+                local row = vim.api.nvim_win_get_cursor(0)[1]
+                format_range(row - 1, 0, row, 0)
+            end, { noremap = true, silent = true, buffer = 0 })
+
+            -- Visual mode: selection
+            vim.keymap.set("v", "=", function()
+                local start_pos = vim.fn.getpos("'<")
+                local end_pos = vim.fn.getpos("'>")
+                format_range(
+                    start_pos[2] - 1, start_pos[3] - 1,
+                    end_pos[2] - 1, end_pos[3]
+                )
+            end, { noremap = true, silent = true, buffer = 0 })
+        end,
+    })
+end
+
+
 return {
   "williamboman/mason.nvim",
   dependencies = {
@@ -88,16 +124,25 @@ return {
         end,
     })
 
+    format_helper({ "css", "scss", "less" }, function(client)
+        return client.name == "cssls"
+    end)
+    format_helper({ "html" }, function(client)
+        return client.name == "html"
+    end)
+    format_helper({ "javascript", "typescript" }, function(client)
+        return client.name == "tsserver"
+    end)
+    format_helper({ "c", "cpp" }, function(client)
+        return client.name == "clangd"
+    end)
+
     vim.diagnostic.config({
       virtual_text = false,
       signs = false,
       underline = false,
       update_in_insert = false,
     })
-
-    -- lsp.nvim_workspace()
-    --
-    -- lsp.setup()
 
     -- Snippet Keybindings (Tab and Shift-Tab for placeholder navigation)
     local luasnip = require('luasnip')

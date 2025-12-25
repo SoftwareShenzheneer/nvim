@@ -28,6 +28,7 @@ vim.opt.autoindent = true
 vim.opt.smartindent = true
 vim.opt.shiftwidth = 4
 vim.opt.tabstop = 4
+vim.opt.softtabstop = 4
 
 -- Show tabs/spaces
 vim.cmd [[set list]]
@@ -80,5 +81,4 @@ vim.keymap.set("n", "<leader>ot", ":ObsidianToday<CR>", { noremap = true, silent
 
 -- Custom remap for builds and shit
 -- vim.keymap.set('n', '<C-b>', '<Cmd>Build<CR>', { noremap = true, silent = true })
-
 
