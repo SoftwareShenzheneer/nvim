@@ -33,6 +33,11 @@ local function format_helper()
     })
 end
 
+local function cmd_helper(cmd)
+    local is_windows = vim.loop.os_uname().version:match("Windows")
+    local mason_bin = vim.fn.stdpath("data") .. "/mason/bin/"
+    return { mason_bin .. cmd .. (is_windows and ".cmd" or ""), "--stdio" }
+end
 
 return {
   "williamboman/mason.nvim",
@@ -57,8 +62,6 @@ return {
       automatic_installation = true,
     }
 
-    local mason_bin = vim.fn.stdpath("data") .. "/mason/bin/"
-
     -- C/C++
     vim.lsp.config["clangd"] = {
       cmd = { "clangd" },
@@ -79,7 +82,7 @@ return {
 
     -- HTML
     vim.lsp.config["html"] = {
-		cmd = { mason_bin .. "vscode-html-language-server.cmd", "--stdio" },
+        cmd = cmd_helper("vscode-html-language-server"),
         filetypes = { "html" },
         root_dir = vim.fs.dirname(vim.fs.find({ ".git" }, { upward = true })[1]),
     }
@@ -92,8 +95,7 @@ return {
     })
     -- CSS
     vim.lsp.config["cssls"] = {
-        cmd = { "css-lsp" },
-		cmd = { mason_bin .. "vscode-css-language-server.cmd", "--stdio" },
+        cmd = cmd_helper("vscode-css-language-server"),
         filetypes = { "css" },
         root_dir = vim.fs.dirname(vim.fs.find({ ".git" }, { upward = true })[1]),
     }
@@ -106,8 +108,7 @@ return {
     })
     -- JavaScript
     vim.lsp.config["ts_ls"] = {
-        cmd = { "typescript-language-server", "--stdio" },
-		cmd = { mason_bin .. "typescript-language-server", "--stdio" },
+        cmd = cmd_helper("typescript-language-server"),
         filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
         root_dir = vim.fs.dirname(vim.fs.find({ "package.json", ".git" }, { upward = true })[1]),
 
