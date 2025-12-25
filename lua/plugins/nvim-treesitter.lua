@@ -5,7 +5,7 @@ return {
     config = function()
       local configs = require("nvim-treesitter")
       configs.setup({
-        ensure_installed = { "c", "javascript", "typescript", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "bash" },
+        ensure_installed = { "c", "javascript", "typescript", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline", "bash", "html", "css" },
         auto_install = true,
         highlight = {
           enable = true,

@@ -17,10 +17,13 @@ return {
   config = function()
     require("mason").setup()
     require("mason-lspconfig").setup {
-      ensure_installed = { "clangd", "pyright", "bashls", "marksman" },
+      ensure_installed = { "clangd", "pyright", "bashls", "marksman", "html", "cssls" },
       automatic_installation = true,
     }
 
+    local mason_bin = vim.fn.stdpath("data") .. "\\mason\\bin\\"
+
+    -- C/C++
     vim.lsp.config["clangd"] = {
       cmd = { "clangd" },
       filetypes = { "c", "cpp" },
@@ -36,6 +39,53 @@ return {
       callback = function(event)
         vim.lsp.start(vim.lsp.config["clangd"], { bufnr = event.buf })
       end,
+    })
+
+    -- HTML
+    vim.lsp.config["html"] = {
+		cmd = { mason_bin .. "vscode-html-language-server.cmd", "--stdio" },
+        filetypes = { "html" },
+        root_dir = vim.fs.dirname(vim.fs.find({ ".git" }, { upward = true })[1]),
+    }
+
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "html" },
+        callback = function(event)
+            vim.lsp.start(vim.lsp.config["html"], { bufnr = event.buf })
+        end,
+    })
+    -- CSS
+    vim.lsp.config["cssls"] = {
+        cmd = { "css-lsp" },
+		cmd = { mason_bin .. "vscode-css-language-server.cmd", "--stdio" },
+        filetypes = { "css" },
+        root_dir = vim.fs.dirname(vim.fs.find({ ".git" }, { upward = true })[1]),
+    }
+
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "css" },
+        callback = function(event)
+            vim.lsp.start(vim.lsp.config["cssls"], { bufnr = event.buf })
+        end,
+    })
+    -- JavaScript
+    vim.lsp.config["ts_ls"] = {
+        cmd = { "typescript-language-server", "--stdio" },
+		cmd = { mason_bin .. "typescript-language-server", "--stdio" },
+        filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
+        root_dir = vim.fs.dirname(vim.fs.find({ "package.json", ".git" }, { upward = true })[1]),
+
+        on_attach = function(client, bufnr)
+            -- Optional: disable semantic tokens like clangd
+            -- client.server_capabilities.semanticTokensProvider = nil
+        end,
+    }
+
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
+        callback = function(event)
+            vim.lsp.start(vim.lsp.config["ts_ls"], { bufnr = event.buf })
+        end,
     })
 
     vim.diagnostic.config({
