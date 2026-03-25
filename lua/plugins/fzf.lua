@@ -8,10 +8,13 @@ return {
     local fzf = require("fzf-lua")
 
     fzf.setup({
-      files = {
-        -- Use fd (Ubuntu: you symlink fdfind → fd)
-        cmd = "fd --type f --hidden --exclude .git",
-      },
+        files = {
+            -- Use fd (Ubuntu: you symlink fdfind → fd)
+            cmd = table.concat({
+                "fd --type f --hidden --exclude .git",
+                "fd err.log --hidden --no-ignore"
+            }, " ; "),
+        },
 
       winopts = {
         height = 0.90,   -- 85% of the screen height
