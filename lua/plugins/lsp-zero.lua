@@ -97,6 +97,21 @@ return {
       end,
     })
 
+    -- Python
+    vim.lsp.config["pyright"] = {
+        cmd = cmd_helper("pyright-langserver"),
+        filetypes = { "python" },
+        root_dir = vim.fs.dirname(vim.fs.find({ "pyproject.toml", "setup.py", ".git" }, { upward = true })[1]),
+        capabilities = require('cmp_nvim_lsp').default_capabilities(),
+    }
+
+    vim.api.nvim_create_autocmd("FileType", {
+        pattern = "python",
+        callback = function(event)
+            vim.lsp.start(vim.lsp.config["pyright"], { bufnr = event.buf })
+        end,
+    })
+
     -- HTML
     vim.lsp.config["html"] = {
         cmd = cmd_helper("vscode-html-language-server"),
