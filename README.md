@@ -2,6 +2,7 @@
 This is my personal nvim configuration which I use daily. It's a pretty basic setup but just enough to get me through every task I ran into so far.
 This should be able to serve for anyone who is looking for a minimal configuration. The components include:
 - fzf - fuzzy finder
+- gitsigns - some handy dandy git visualizations
 - lsp-zero - complete lsp, C, Python, Bash and Lua installed
 - nvim-autopairs - auto match brackets
 - nvim-treesitter
